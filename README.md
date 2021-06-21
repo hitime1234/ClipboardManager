@@ -1,0 +1,2 @@
+# ClipboardManager
+allows multple clipboards. 
