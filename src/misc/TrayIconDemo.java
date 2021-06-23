@@ -3,35 +3,33 @@ package misc;
 /*
  * TrayIconDemo.java
  */
-import misc.clipProgram;
 import java.awt.*;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.*;
+import java.io.IOException;
 import java.net.URL;
 import javax.swing.*;
-import javax.sound.midi.SysexMessage;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
-import java.util.Scanner;
 import java.util.ArrayList;
 
 
 public class TrayIconDemo {
     public static int i = 1;
-    public static ArrayList<String> holdTEXT = new ArrayList<String>();
-    private static String readClipboard(){
+    public static ArrayList<Transferable> holdTEXT = new ArrayList<Transferable>();
+    private static Transferable readClipboard(){
         try {
-            return (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
+            return Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
         } catch (Exception e){
-            return "Images aren't supported";
+            Transferable transferable = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+            return transferable;
         }
     }
-    private static boolean writeClipboard(String theString){
+    private static boolean writeClipboard(Transferable TheEPIC){
         try {
-            StringSelection selection = new StringSelection(theString);
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(TheEPIC, null);
             return true;
         }
         catch (Exception e){
@@ -58,7 +56,23 @@ public class TrayIconDemo {
         //adding TrayIcon.
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                holdTEXT.add("");holdTEXT.add("");holdTEXT.add("");holdTEXT.add("");
+                Transferable alt = new Transferable() {
+                    @Override
+                    public DataFlavor[] getTransferDataFlavors() {
+                        return new DataFlavor[0];
+                    }
+
+                    @Override
+                    public boolean isDataFlavorSupported(DataFlavor flavor) {
+                        return false;
+                    }
+
+                    @Override
+                    public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+                        return null;
+                    }
+                };
+                holdTEXT.add(alt);holdTEXT.add(alt);holdTEXT.add(alt);holdTEXT.add(alt);
                 createAndShowGUI();
             }
         });
