@@ -13,29 +13,37 @@ import javax.swing.*;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 
 
 public class TrayIconDemo {
+    public static String stringHold = " ";
     public static int i = 1;
     public static ArrayList<Transferable> holdTEXT = new ArrayList<Transferable>();
     private static Transferable readClipboard(){
         try {
-            return Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+            Transferable HOLD =Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+            stringHold = "ClipManager successfully saved clipboard to Board " + i;
+            return HOLD;
         } catch (Exception e){
-            Transferable transferable = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
-            return transferable;
+            stringHold = "ERROR OCCURRED WHILE READING CLIPBOARD.";
+            return null;
         }
     }
+
     private static boolean writeClipboard(Transferable TheEPIC){
         try {
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(TheEPIC, null);
+            stringHold = "ClipManager Successfully set computer clipboard to Board " + i;
             return true;
         }
         catch (Exception e){
+            stringHold = "ERROR OCCURRED WHILE WRITING CLIPBOARD.";
             return false;
         }
     }
+
     public static void main(String[] args) {
         /* Use an appropriate Look and Feel */
         try {
@@ -91,10 +99,10 @@ public class TrayIconDemo {
         final SystemTray tray = SystemTray.getSystemTray();
 
         // Create a popup menu components
-        MenuItem saveCurrentClipboard = new MenuItem("save current clipboard");
+        MenuItem saveCurrentClipboard = new MenuItem("Save current clipboard");
         CheckboxMenuItem cb1 = new CheckboxMenuItem("Set auto size");
-        MenuItem setSavedClipboard = new MenuItem("set saved clipboard");
-        Menu displayMenu = new Menu("Index manager");
+        MenuItem setSavedClipboard = new MenuItem("Set saved clipboard");
+        Menu displayMenu = new Menu("Board manager");
         MenuItem index1 = new MenuItem("1");
         MenuItem index2 = new MenuItem("2");
         MenuItem index3 = new MenuItem("3");
@@ -127,10 +135,10 @@ public class TrayIconDemo {
 
         saveCurrentClipboard.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                trayIcon.displayMessage("ClipManager",
-                        "Current saved clipboard:\n" +readClipboard(), TrayIcon.MessageType.INFO);
                 try {
                     holdTEXT.set(i, readClipboard());
+                    trayIcon.displayMessage("ClipManager",
+                            stringHold, TrayIcon.MessageType.INFO);
 
                 }
                 catch (Exception x){
@@ -142,6 +150,22 @@ public class TrayIconDemo {
                                 "there was a problem", TrayIcon.MessageType.ERROR);
                     }
                 }
+                try {
+                    Runtime runtime = Runtime.getRuntime();
+                    NumberFormat format = NumberFormat.getInstance();
+                    StringBuilder sb = new StringBuilder();
+                    long maxMemory = runtime.maxMemory();
+                    long allocatedMemory = runtime.totalMemory();
+                    long freeMemory = runtime.freeMemory();
+                    sb.append("free memory: " + format.format(freeMemory / 1024) + "\n");
+                    sb.append("allocated memory: " + format.format(allocatedMemory / 1024) + "\n");
+                    sb.append("max memory: " + format.format(maxMemory / 1024) + "\n");
+                    sb.append("total free memory: " + format.format((freeMemory + (maxMemory - allocatedMemory)) / 1024) + "\n");
+                    System.out.println(sb);
+                } catch (Exception MEM){
+                    System.out.println("\nproblem while ATTEMPTing display memory usage console\n");
+                }
+
             }
         });
 
@@ -160,7 +184,7 @@ public class TrayIconDemo {
             public void actionPerformed(ActionEvent e) {
                 writeClipboard(holdTEXT.get(i));
                 trayIcon.displayMessage("ClipManager",
-                        "your computer clipboard has been set to:\n" + holdTEXT.get(i), TrayIcon.MessageType.INFO);
+                        stringHold, TrayIcon.MessageType.INFO);
             }
         });
 
@@ -171,22 +195,22 @@ public class TrayIconDemo {
                 if ("1".equals(item.getLabel())) {
                     i = 1;
                     trayIcon.displayMessage("ClipManager",
-                            "index 1 selected", TrayIcon.MessageType.INFO);
+                            "Board 1 selected", TrayIcon.MessageType.INFO);
 
                 } else if ("2".equals(item.getLabel())) {
                     i = 2;
                     trayIcon.displayMessage("ClipManager",
-                            "index 2 selected", TrayIcon.MessageType.INFO);
+                            "Board 2 selected", TrayIcon.MessageType.INFO);
 
                 } else if ("3".equals(item.getLabel())) {
                     i = 3;
                     trayIcon.displayMessage("ClipManager",
-                            "index 3 selected", TrayIcon.MessageType.INFO);
+                            "Board 3 selected", TrayIcon.MessageType.INFO);
 
                 } else if ("4".equals(item.getLabel())) {
                     i= 4;
                     trayIcon.displayMessage("ClipManager",
-                            "index 4 selected", TrayIcon.MessageType.INFO);
+                            "Board 4 selected", TrayIcon.MessageType.INFO);
                 }
             }
         };
