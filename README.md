@@ -18,6 +18,7 @@ images now will not be accepted by the program.
 2.0 -- beta/version 2.x.x release:
 
 icons gui now allows for picture
-*Due to way windows notifcations work i can't allow text copied to be displayed without a bunch of try and except
+*Due to way windows notifcations work i can't allow text copied to be displayed 
+*without a bunch of try and except
 *this will be fixed at a later time in 3.0 release
 
